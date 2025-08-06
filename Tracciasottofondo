@@ -1,0 +1,70 @@
+import logging
+import pygame
+import threading
+import time
+logger = logging.getLogger("BackgroundMusicManager")
+class BackgroundMusicManager:
+def __init__(self, file_path, volume=0.6):
+self.file_path = file_path
+self.volume = volume
+self.is_playing = False
+self.stop_event = threading.Event()
+try:
+pygame.mixer.init()
+pygame.mixer.music.load(self.file_path)
+pygame.mixer.music.set_volume(self.volume)
+logger.info("Pygame mixer inizializzato e traccia di sottofondo caricata.")
+except Exception as e:
+logger.error(f"Errore durante l'inizializzazione di pygame o il caricamento del file: {e}")
+pygame.mixer.quit()
+def _loop_track(self):
+"""Funzione interna che gestisce il loop della traccia."""
+while not self.stop_event.is_set():
+if not pygame.mixer.music.get_busy() and self.is_playing:
+logger.info("Traccia di sottofondo terminata, la riavvio.")
+pygame.mixer.music.play()
+time.sleep(1)
+def start(self):
+"""Avvia la riproduzione in loop in un thread separato."""
+if not self.is_playing:
+try:
+logger.info("Avvio della musica di sottofondo...")
+pygame.mixer.music.play()
+self.is_playing = True
+# Avviamo il thread per gestire il loop
+self.loop_thread = threading.Thread(target=self._loop_track, daemon=True)
+self.loop_thread.start()
+logger.info("Thread per il loop della musica di sottofondo avviato.")
+except Exception as e:
+logger.error(f"Impossibile avviare la musica di sottofondo: {e}")
+def pause(self):
+"""Mette in pausa la musica di sottofondo."""
+if self.is_playing:
+logger.info("Musica di sottofondo in pausa.")
+pygame.mixer.music.pause()
+self.is_playing = False
+def resume(self):
+"""Riprende la musica di sottofondo."""
+if not self.is_playing:
+
+logger.info("Ripresa della musica di sottofondo.")
+pygame.mixer.music.unpause()
+self.is_playing = True
+def stop(self):
+"""Ferma completamente la riproduzione e rilascia le risorse."""
+logger.info("Arresto completo del gestore di musica di sottofondo.")
+self.stop_event.set()
+try:
+if pygame.mixer.get_init():
+pygame.mixer.music.stop()
+pygame.mixer.quit()
+except pygame.error:
+# Ignora errori se il mixer non è inizializzato
+pass
+# Creiamo un'istanza unica che verrà usata in tutto il progetto
+try:
+# Usiamo il percorso relativo corretto
+music_manager = BackgroundMusicManager("Tracciadisottofondo/TRACCIASOTTOFONDO.ogg")
+except Exception as e:
+logger.error(f"Impossibile creare l'istanza di BackgroundMusicManager: {e}")
+music_manager = None
