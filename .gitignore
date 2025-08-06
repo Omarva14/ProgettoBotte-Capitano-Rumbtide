@@ -1,0 +1,13 @@
+# File di configurazione con dati sensibili
+config.py
+
+# Ambiente Virtuale Python
+venv/
+env/
+
+# Cache di Python
+__pycache__/
+*.pyc
+
+# File di sistema operativo
+.DS_Store
